@@ -214,7 +214,7 @@ class TTCY():
         # self.accept_task()
         # self.receive_award()
 
-        send("哈啰单车", msg1 + msg2)
+        # send("哈啰单车", msg1 + msg2)
 
 
 if __name__ == '__main__':
