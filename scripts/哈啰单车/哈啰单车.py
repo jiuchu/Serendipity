@@ -59,7 +59,6 @@ class TTCY():
         }
         url = 'https://api.hellobike.com/api?common.welfare.signAndRecommend'
         response = requests.post(url, headers=self.headers, json=json_data).json()
-        # print(response)
         if response['code'] == 0 and response['data']['didSignToday']:
             msg = f'✅签到成功, 奖励金：+{response["data"]["bountyCountToday"]}\n'
         else:

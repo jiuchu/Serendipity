@@ -4,7 +4,9 @@ import requests
 import random
 import re
 import time
-
+from urllib3.exceptions import InsecureRequestWarning, InsecurePlatformWarning
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
 
 # import os
 # from http import HTTPStatus
@@ -62,26 +64,21 @@ def get_current_timestamp_milliseconds():
 
 
 def daily_one_word():
-    try:
-        urls = [
-            "https://api.xygeng.cn/openapi/one",
-            "https://v1.hitokoto.cn",
-        ]
-        url = random.choice(urls)
-        response = requests.get(url)
-        if response and response.status_code == 200:
-            response_json = response.json()
-            if url == "https://api.xygeng.cn/openapi/one":
-                return response_json['data']['content']
-            elif url == "https://v1.hitokoto.cn":
-                return response_json['hitokoto']
-            else:
-                return None
+    urls = [
+        "https://api.xygeng.cn/openapi/one",
+        "https://v1.hitokoto.cn",
+    ]
+    url = random.choice(urls)
+    response = requests.get(url, verify=False)
+    if response and response.status_code == 200:
+        response_json = response.json()
+        if url == "https://api.xygeng.cn/openapi/one":
+            return response_json['data']['content']
+        elif url == "https://v1.hitokoto.cn":
+            return response_json['hitokoto']
         else:
-            # print(f"Error: Received status code {response.status_code}")
             return None
-    except requests.RequestException as e:
-        # print("Error fetching the daily one word:", e)
+    else:
         return None
 
 
@@ -207,3 +204,8 @@ def random_delay(min_delay=1, max_delay=5):
     delay = random.uniform(min_delay, max_delay)
     print(f">本次随机延迟：【{delay:.2f}】 秒.....")
     time.sleep(delay)
+
+
+# if __name__ == '__main__':
+#     word = daily_one_word()
+#     print(word)

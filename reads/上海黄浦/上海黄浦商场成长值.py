@@ -1,21 +1,11 @@
 """
 上海黄浦商场成长值
 
-商城成长值解锁兑换E卡、音视频卡券资格
------------------------------------
-900成长值--解锁--4000积分兑换腾讯月卡
-1200成长值--解锁--4300兑换20元京东E卡
-8000成长值--解锁--6600积分兑换30元京东E卡
-------------------------------------
-
-路径： 打开抓包软件，打开上海黄浦APP--首页中间横幅：[演艺大世界]进去，抓Authorization值
-抓域名：hpweb.shmedia.tech 下任意包请求头 Authorization
 变量名: SHHP_MALL_TOKEN
-
 cron: 33 6 * * *
 const $ = new Env("上海黄浦商场成长值");
 -------------------------------------
-20240708 增加成长值达标解锁兑换E卡提醒
+20240708 增加成长值达标解锁兑换E卡通知
 20240701 增加评论剧目功能
 -------------------------------------
 """
@@ -27,7 +17,6 @@ import requests
 from urllib3.exceptions import InsecureRequestWarning, InsecurePlatformWarning
 from common import save_result_to_file
 from sendNotify import send
-
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
 
@@ -304,7 +293,6 @@ class SHHP_MALL():
     def user_growth_notify(self):
         url = 'https://hpweb.shmedia.tech/show-life-api/front/member/info'
         response_json = requests.post(url, headers=self.headers).json()
-        print(response_json)
         if response_json["code"] == 0:
             nick_name = response_json["data"]["nickname"]
             mobile = response_json["data"]["mobile"]
@@ -322,13 +310,12 @@ class SHHP_MALL():
                         8000成长值 - -解锁 - -6600积分兑换30元京东E卡
                 ✨ 规则
                 '''
+                message += f'账号: {mobile}\n'
                 send("上海黄浦成长值达标1200", message)
-        else:
-            print("dui✅✅✅✅✅   skadlsc ")
 
     def main(self):
         if self.user_mall_info():
-            # self.play_mall_task()
+            self.play_mall_task()
             self.user_growth_notify()
 
 
@@ -342,15 +329,11 @@ if __name__ == '__main__':
     ''')
     env_name = 'SHHP_MALL_TOKEN'
     tokenStr = os.getenv(env_name)
-    tokenStr = [{"id": "ojBHr6Du8vB2cupg_MSa66ytwIK0",
-                 "token": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI3MjkwMWNkOWI4YWVjNDdkMGMxMzcyOWNlMDZiZDM2ZiIsImF1dGgiOiJST0xFX01FTUJFUiIsInR5cGUiOiJtZW1iZXIiLCJleHAiOjE3MjEwMTMxNjgsImlhdCI6MTcyMDQwODM2OCwianRpIjoiMjllZjIzMmUtNDU0Yy00ODEzLThlNDEtZTQzYTI3ZWIyYjdjIiwidXNlcm5hbWUiOiLkvJrlkZg4Mzg0MDAyNCJ9.KwCh_33eNKyYqHvEYhlLqB0rnwCWcbdODQATgmkllD9MO8ArnMuUhbF8x4IgvCfLkHS5eqo-lbHljvjjgWxPSNHhfYX0-fha4myK2VK5TdM_Ec8-pK8BIooY9dExOiHXl7gzZQDWELQNXlFskYi14RqyKaZBPXSbXGo2Zi_Cc_timFjNS8VGnV4FHzWI6F0RjyJSWn58RnoLmFdeVmobMq-gUxww8TxmPBq2viM44yl-orawNy_XYpDMK3TQSqrQoB4vmQt99dlxjQoxIz8rXo3NGU7r7E206Z0Zh7WdxdrFiFmAXYqLmliWYOwb3t7j3Rr8WudcoQa_5oVOdbwpcA"}]
     if not tokenStr:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)
-
     try:
-        # json_data = json.loads(tokenStr)
-        json_data = tokenStr
+        json_data = json.loads(tokenStr)
         print(f"共获取到{len(json_data)}个账号")
     except json.JSONDecodeError:
         print('⛔️ JSON 解析失败，请检查变量格式是否正确')

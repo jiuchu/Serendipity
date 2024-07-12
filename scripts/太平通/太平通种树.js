@@ -3,16 +3,13 @@
  *
  * 抓任意请求头 token
  * 变量名: TaiPingTong
- * 变量格式：
- *     {
- *         "token": "xxxxxx",
- *         "userId": "xxxxx"
- *     }
- * 多账号续写
- *
  * cron: 25 7 * * *
  * const $ = new Env("太平通种树");
  */
+// 禁用不安全的重新协商
+const https = require('https');
+https.globalAgent.options.secureOptions = require('constants').SSL_OP_LEGACY_SERVER_CONNECT;
+
 const name = "太平通种树"
 const $ = new Env(name);
 let TaiPingTong = ($.isNode() ? process.env.TaiPingTong : $.getjson("TaiPingTong")) || [];

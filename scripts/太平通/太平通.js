@@ -3,25 +3,22 @@
  *
  * 抓任意请求头 token
  * 变量名: TaiPingTong
- * 变量格式：
- *     {
- *         "token": "xxxxxx",
- *         "userId": "xxxxx"
- *     }
  * 多账号续写，一机一号抓包，一机多号黑成煤炭
  *
  * cron: 55 6 * * *
  * const $ = new Env("太平通");
+ * -----------------------------------
+ * 20240710 修复青龙运行报错SSL协议错误问题
+ * -----------------------------------
  */
 
-// 禁用不安全的重新协商,解决青龙运行报错SSL协议错误问题
+// 禁用不安全的重新协商
 const https = require('https');
 https.globalAgent.options.secureOptions = require('constants').SSL_OP_LEGACY_SERVER_CONNECT;
 
 const name = "太平通"
-const $ = new Env("name");
-// let TaiPingTong = ($.isNode() ? JSON.parse(process.env.TaiPingTong) : $.getjson("TaiPingTong")) || [];
-let TaiPingTong = []
+const $ = new Env(name);
+let TaiPingTong = ($.isNode() ? JSON.parse(process.env.TaiPingTong) : $.getjson("TaiPingTong")) || [];
 !(async () => {
     if (typeof $request != "undefined") {
         await getCookie();
