@@ -2,14 +2,6 @@
  * IQOO社区
 
  * 变量名: IQOO
- * 变量格式：
- *     {
- *         id: 'xxx',
- *         token: 'xxxxx',
- *         xVisitor: 'xxxx'
- *     }
- * 多账号用续写 
-
  * cron: 19 9 * * *
  * const $ = new Env("IQOO社区");
  */
@@ -17,14 +9,7 @@
 const name = "IQOO社区"
 const $ = new Env('IQOO社区')
 const crypto = createCryptoJS()
-// const IQOO = ($.isNode() ? JSON.parse(process.env.IQOO) : $.getjson("IQOO")) || [];
-const IQOO = [
-    {
-        "id": 5192018,
-        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIiLCJqdGkiOiJmZWIwOTY3YTRhMDlkZDdlZTFjZGU3NTAxYTMwMTA1NjUzOGJiMWRmYjMzODQ0ZjVjN2Y3NmU1M2JhMjNmNWYyZTc4ZDc0NDdlN2QzZDlhMSIsImlhdCI6MTcxOTM3NjQ5MSwibmJmIjoxNzE5Mzc2NDkxLCJleHAiOjE3MjE5Njg0OTEsInN1YiI6IjUxOTIwMTgiLCJzY29wZXMiOltudWxsXX0.TFU6X_91NDu8kfKySgkfxnXkkzxjtPXTdYoZCHxuObXr9R6KpllJVx8MIAqhUw9UcswA2sw1iP0pgnbylwepMWAJieuSGnZZGwg_PXjnyTmYdIpZ8dJe5ro5CtGk_1Ds3ChqFIJ7FQ0JFrBqp11e-f9CpsgS7z5ZAAscRvRg4vLmSaPlALZnfeIPoaowhGs9Sq65H2XsCUYcZiVuwAr8sx14BxzlGipdwowCedfkmciEhi1bgz-Jd57B27WyPerjeMx83jv8nloiaod0tzIKlOf6ic_ZP_oBylH6H5sinigoR_lxsJMoe3A4s1Y129-C8noiBlfMBRzKy_G7iz04pA",
-        "xVisitor": "b89d8b0ffa920e96f3cb4c1f69ec2c66"
-    }
-]
+const IQOO = ($.isNode() ? JSON.parse(process.env.IQOO) : $.getjson("IQOO")) || [];
 const IQOO_Create = ($.isNode() ? process.env.IQOO_Create : $.getdata("IQOO_Create")) || false;
 let time = ''
 let token = ''
@@ -373,10 +358,7 @@ function getSign(e, t, n) {
 }
 
 const fs = require('fs');
-
-// 获取当前日期并格式化
 const todayDate = new Date().toISOString().split('T')[0].replace(/-/g, '');
-
 function saveResultToFile(status, name) {
     let result;
     if (status === "success") {

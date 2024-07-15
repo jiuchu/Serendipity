@@ -168,3 +168,10 @@ node_modules/
 todo/
 tools/
 document/
+package.json
+package-lock.json
+cron
+debug/
+todo/mls/
+/slider
+/Areverse

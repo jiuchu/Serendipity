@@ -1,33 +1,47 @@
 """
-ZS信诺
+招商信诺
 
-抓任意包请求头 Authorization
-变量名: ZSXN_TOKEN
+软件：招商信诺APP
+抓包：微信登陆绑定手机，抓微信小程序招商信诺服务中心的包【https://member.cignacmb.com/mini/member/interface/login】
+#青龙填写变量zsxn，值为unionid@miniopenid@mobile，多个账号就创建多个变量
+变量名: ZSXN
+变量值：unionid#miniopenid#mobile
+多账号&连接
 
-cron: 0 0,6,12,18 * * *
-const $ = new Env("ZS信诺");
+cron: 0 12,21 * * *
+const $ = new Env("招商信诺");
+
+--------------------------
+20240714 修复CK有效期短问题
+--------------------------
 """
+import json
 import os
 import random
 import re
 import time
 import requests
 from urllib3.exceptions import InsecureRequestWarning, InsecurePlatformWarning
+from common import save_result_to_file
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
 
 
 class ZSXN():
-    name = "ZS信诺"
+    name = "招商信诺"
 
     def __init__(self, token):
-        self.token = token
+        unionid, miniopenid, mobile = token.split('#')
+        self.token = ''
+        self.unionid = unionid
+        self.miniopenid = miniopenid
+        self.mobile = mobile
         self.lottery_count = 0
         self.headers = {
             'authority': 'vip.ixiliu.cn',
             'accept': '*/*',
             'accept-language': 'zh-CN,zh;q=0.9',
-            'access-token': token,
+            'access-token': '',
             'content-type': 'application/json;charset=utf-8',
             'platform': 'MP-WEIXIN',
             'referer': 'https://servicewechat.com/wx9a2dc52c95994011/91/page-frame.html',
@@ -38,6 +52,43 @@ class ZSXN():
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a1b) XWEB/9129',
             'xweb_xhr': '1',
         }
+
+    def user_login(self):
+        headers = {
+            'Host': 'member.cignacmb.com',
+            'requestChannel': 'MINI',
+            'Authorization': 'Bearer_',
+            'content-type': 'application/x-www-form-urlencoded',
+            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.42(0x18002a32) NetType/WIFI Language/zh_CN',
+            'Referer': 'https://servicewechat.com/wxfdbf8b13d7468707/206/page-frame.html',
+        }
+        payload = {
+            "unionid": self.unionid,
+            "miniOpenId": self.miniopenid,
+            "mobile": self.mobile,
+            "miniOpenid": self.miniopenid,
+            "sensorDeviceId": self.miniopenid
+        }
+        # 创建一个空的 data 字典
+        data = {'param': json.dumps(payload)}
+        print(data)
+        response = requests.post('https://member.cignacmb.com/mini/member/interface/login', headers=headers, data=data)
+        if not response or response.status_code != 200:
+            print(f"登陆失败 | {response.text}")
+            save_result_to_file("error", self.name)
+            return False
+        response_json = response.json()
+        if response_json["respCode"] == "00":
+            # 获取响应头中 Authorization 字段的值
+            token = response.headers.get('token', '')
+            self.headers['access-token'] = f'Bearer_{token}'
+            self.token = f'Bearer_{token}'
+            save_result_to_file("success", self.name)
+            return True
+        else:
+            print(f"登陆失败 | {response_json['respDesc']}")
+            save_result_to_file("error", self.name)
+            return False
 
     def user_info(self):
         response = requests.get('https://vip.ixiliu.cn/mp/user/info', headers=self.headers)
@@ -513,36 +564,41 @@ class ZSXN():
 
 
     def main(self):
-        self.points_info()
-        self.init_lottery()
+        # 登录
+        if self.user_login():
+            self.points_info()
+            self.init_lottery()
+            time.sleep(random.randint(5, 10))
 
-        # 每日签到
-        self.sign()
-        time.sleep(random.randint(15, 20))
+            # 每日签到
+            self.sign()
+            time.sleep(random.randint(10, 15))
 
-        # 糯米转盘
-        # for i in range(self.lottery_count):
-        #     self.do_lottery()
-        #     time.sleep(random.randint(15, 20))
+            # 糯米转盘
+            # for i in range(self.lottery_count):
+            #     self.do_lottery()
+            #     time.sleep(random.randint(15, 20))
 
-        # 一诺庄园
-        self.do_candy_task()
+            # 一诺庄园
+            self.do_candy_task()
 
-        # 投喂糖果
-        self.invest_candy()
-        self.init_user_info()
+            # 投喂糖果
+            self.invest_candy()
+            self.init_user_info()
 
-        self.healthy_task()
+            self.healthy_task()
+
+
 
 
 if __name__ == '__main__':
-    env_name = 'JSB_TOKEN'
+    env_name = 'ZSXN'
     tokenStr = os.getenv(env_name)
     if not tokenStr:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)
     tokens = re.split(r'&', tokenStr)
-    print(f"ZS信诺共获取到{len(tokens)}个账号")
+    print(f"招商信诺共获取到{len(tokens)}个账号")
     for i, token in enumerate(tokens, start=1):
         print(f"\n======== ▷ 第 {i} 个账号 ◁ ========")
         ZSXN(token).main()

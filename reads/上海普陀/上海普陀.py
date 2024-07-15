@@ -14,7 +14,8 @@ import time
 import requests
 from bs4 import BeautifulSoup
 from urllib3.exceptions import InsecureRequestWarning, InsecurePlatformWarning
-from common import qianwen_messages, make_request
+from common import qianwen_messages, make_request, save_result_to_file
+
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
 
@@ -42,7 +43,6 @@ class SHPT():
         json_data = {}
         url = 'https://ptweb.shmedia.tech/media-basic-port/api/app/points/login/add'
         response = make_request(url, json_data=json_data, method='post', headers=self.headers)
-        # print(response)
         if response and response['code'] == 0:
             save_result_to_file("success", self.name)
             print("登录任务执行成功")

@@ -1,6 +1,6 @@
 /**
  * 福田e家
- * 
+ *
  * 变量名: FTEJ
  * 格式：账号#密码
  * cron: 19 9 * * *
@@ -50,6 +50,7 @@ class UserInfo {
             // console.log(result)
             if (result.code == 200) {
                 console.log(`账号 ${this.user} 登录成功`)
+                saveResultToFile("success", name)
                 this.token = result.data.token
                 this.memberComplexCode = result.data.memberComplexCode
                 this.uid = result.data.uid
@@ -63,9 +64,11 @@ class UserInfo {
                 await this.grxx()
             } else {
                 console.log(`账号 ${this.user} 登录失败 `)
+                saveResultToFile("error", name)
             }
         } catch (e) {
             console.log(e)
+            saveResultToFile("error", name)
         } finally {
             return Promise.resolve(1);
         }
@@ -675,6 +678,26 @@ function checkEnv() {
 
     console.log(`\n共找到${userCount}个账号`)
     return true
+}
+
+
+const fs = require('fs');
+const todayDate = new Date().toISOString().split('T')[0].replace(/-/g, '');
+function saveResultToFile(status, name) {
+    let result;
+    if (status === "success") {
+        result = `✅【${name}】 | CK正常`;
+    } else if (status === "error") {
+        result = `❌【${name}】 | CK已失效`;
+    }
+
+    const fileName = `script_results_${todayDate}.txt`;
+
+    try {
+        fs.appendFileSync(fileName, `${result}\n`, 'utf8');
+    } catch (err) {
+        console.error(`保存结果到文件时出现异常：${err.message}`);
+    }
 }
 
 

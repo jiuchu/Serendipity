@@ -39,7 +39,6 @@ class RUN():
         }
         try:
             response = requests.get('https://m.picclife.cn/chicken-api/h5login', params=params, headers=self.mHeaders)
-            print(response.text)
             if not response or response.status_code != 200:
                 print('鸡场登录异常')
                 save_result_to_file("error", self.name)
@@ -124,10 +123,10 @@ class RUN():
                         time.sleep(5)
                         self.do_task_collect(taskSort)
                     # 进入庄园
-                    elif item["taskSort"] == 35:
-                        self.do_share_task()
-                        time.sleep(5)
-                        self.do_task_collect(taskSort)
+                    # elif item["taskSort"] == 35:
+                    #     self.do_share_task()
+                    #     time.sleep(5)
+                    #     self.do_task_collect(taskSort)
                     # 使用道具
                     elif item["taskSort"] == 113:
                         print()
@@ -157,10 +156,21 @@ class RUN():
 
     # 连续签到[早5:00-9:00打卡得翻倍奖励]
     def daily_sign(self):
+        # 普通签到，非【5-9】
         params = {
             'clockNumber': '1',
             'foodQuantity': '0',
         }
+        # 非【5-9】连签3天，得2份
+        # params = {
+        #     'clockNumber': '2',
+        #     'foodQuantity': '0',
+        # }
+        # 普通签到【5-9】时间内签到
+        # params = {
+        #     'clockNumber': '？？？',
+        #     'foodQuantity': '0',
+        # }
         url = 'https://m.picclife.cn/chicken-api/p/chicken/tashdailyfinish'
         response = requests.get(url, params=params, headers=self.mHeaders)
 
@@ -189,7 +199,6 @@ class RUN():
             'tashId': taskSort,
         }
         response_json = requests.post('https://m.picclife.cn/chicken-api/p/chicken/tashfinish', params=params, headers=self.mHeaders).json()
-        print("response1_json=", response_json)
         if response_json["code"] == 200:
             print(f'🐔任务完成')
         else:
@@ -327,6 +336,7 @@ class RUN():
 if __name__ == '__main__':
     env_name = 'ZGRBYJ'
     user_id = os.getenv(env_name)
+    user_id = 'b7617974424ef68e693237b27fd2e244'
     if not user_id:
         print(f'⛔️未获取到ck变量：请检查变量 {env_name} 是否填写')
         exit(0)
