@@ -5,13 +5,13 @@
  * 抓任意请求头 Cookie
  * 变量名: YZGJ
  * 变量格式：cookie1&cookie2
-
  * cron: 45 6 * * *
  * const $ = new Env("云筑工匠");
  */
 
 const name = "云筑工匠"
 const $ = new Env(name)
+const notify = require('./sendNotify');
 let YZGJ = ($.isNode() ? process.env.YZGJ : $.getdata('YZGJ')) || '';
 const cookies = YZGJ.split('&');
 let cookie = ''
@@ -22,7 +22,6 @@ let notice = '';
 
 async function main() {
     for (const _cookie of cookies) {
-        // id = item.id;
         id = "骑狗跨大海"
         cookie = _cookie;
         console.log(`用户：${id}开始任务`)
@@ -54,17 +53,17 @@ async function main() {
             console.log(withdraw.message)
             if (withdraw.code === 200) {
                 console.log("提现成功")
-                notice += `用户：${id} 提现成功,请前往公众号领取\n`
-                $.msg("云筑工匠红包领取通知", '', notice);
+                msg = `用户：${id} 红包已兑换, 请前往公众号领取\n`
+                notice += msg
+                $.msg("云筑工匠红包待领取通知", '', notice);
+                // 消息推送
+                await notify.sendNotify($.name, msg);
             } else {
                 console.log(withdraw.message)
                 notice += `用户：${id} 提现失败\n`
             }
         }
     }
-    // if (notice) {
-    //     $.msg("云筑工匠红包领取通知", '', notice);
-    // }
 }
 
 async function commonPost(url, body) {

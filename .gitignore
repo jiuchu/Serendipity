@@ -163,6 +163,7 @@ cython_debug/
 
 # HiMsWang
 .idea
+/Areverse
 discard/
 node_modules/
 todo/
@@ -174,4 +175,3 @@ cron
 debug/
 todo/mls/
 /slider
-/Areverse

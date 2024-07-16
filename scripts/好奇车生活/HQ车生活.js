@@ -315,10 +315,7 @@ async function signLuckyDrawGet(url) {
 
 
 const fs = require('fs');
-
-// 获取当前日期并格式化
 const todayDate = new Date().toISOString().split('T')[0].replace(/-/g, '');
-
 function saveResultToFile(status, name) {
     let result;
     if (status === "success") {
@@ -326,9 +323,7 @@ function saveResultToFile(status, name) {
     } else if (status === "error") {
         result = `❌【${name}】 | CK已失效`;
     }
-
     const fileName = `script_results_${todayDate}.txt`;
-
     try {
         fs.appendFileSync(fileName, `${result}\n`, 'utf8');
     } catch (err) {

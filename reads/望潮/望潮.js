@@ -9,8 +9,7 @@
  */
 const name = '望潮'
 const $ = new Env(name)
-// let WangChao = ($.isNode() ? process.env.WangChao : $.getdata("WangChao")) || '';
-let WangChao = '18318743482#qweasdzxc123.'
+let WangChao = ($.isNode() ? process.env.WangChao : $.getdata("WangChao")) || '';
 let Utils = undefined;
 let tenantId = '64'
 let commonUa = ''

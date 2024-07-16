@@ -15,7 +15,6 @@ import requests
 from bs4 import BeautifulSoup
 from urllib3.exceptions import InsecureRequestWarning, InsecurePlatformWarning
 from common import qianwen_messages, save_result_to_file
-
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
 
@@ -67,7 +66,6 @@ class SHJD():
                 print("HTTP request failed with status code:", response.status_code)
         except requests.exceptions.JSONDecodeError as e:
             print("JSON decode error:", e)
-            print("Response content:", response.text)
 
     def userinfo(self):
         json_data = {}
@@ -87,7 +85,6 @@ class SHJD():
         except requests.exceptions.JSONDecodeError as e:
             save_result_to_file("error", self.name)
             print("JSON decode error:", e)
-            print("Response content:", response.text)
 
     def sign(self):
         json_data = {}
@@ -101,7 +98,6 @@ class SHJD():
                 print("HTTP request failed with status code:", response.status_code)
         except requests.exceptions.JSONDecodeError as e:
             print("JSON decode error:", e)
-            print("Response content:", response.text)
 
     def today_score(self):
         json_data = {
@@ -122,7 +118,6 @@ class SHJD():
                 return None
         except requests.exceptions.JSONDecodeError as e:
             print("JSON decode error:", e)
-            print("Response content:", response.text)
             return None
 
     def task_list(self):
@@ -145,7 +140,6 @@ class SHJD():
                 print("HTTP request failed with status code:", response.status_code)
         except requests.exceptions.JSONDecodeError as e:
             print("JSON decode error:", e)
-            print("Response content:", response.text)
 
     def article_list(self):
         json_data = {
@@ -167,7 +161,6 @@ class SHJD():
                 return None
         except requests.exceptions.JSONDecodeError as e:
             print("JSON decode error:", e)
-            print("Response content:", response.text)
             return None
 
     def article_read_points_add(self):
@@ -181,7 +174,6 @@ class SHJD():
                 print("HTTP request failed with status code:", response.status_code)
         except requests.exceptions.JSONDecodeError as e:
             print("JSON decode error:", e)
-            print("Response content:", response.text)
 
     def article_content(self, id):
         json_data = {
